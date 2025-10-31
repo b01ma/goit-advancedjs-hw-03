@@ -50,9 +50,23 @@ async function handleSearchSubmit(event) {
   showLoader(loader);
 
   // Fetch images
-  let data = null;
   try {
-    data = await fetchImages(query);
+    const data = await fetchImages(query);
+    hideLoader(loader);
+
+    // Render gallery
+    const galleryMarkup = renderGallery(data.hits);
+    gallery.innerHTML = galleryMarkup;
+
+    // Refresh SimpleLightbox
+    lightbox.refresh();
+
+    // Show success message
+    iziToast.success({
+      title: 'Success',
+      message: `Found ${data.totalHits} images!`,
+      position: 'topRight',
+    });
   } catch (error) {
     hideLoader(loader);
 
@@ -74,22 +88,6 @@ async function handleSearchSubmit(event) {
 
     console.error('Error fetching images:', error);
   }
-
-  hideLoader(loader);
-
-  // Render gallery
-  const galleryMarkup = renderGallery(data.hits);
-  gallery.innerHTML = galleryMarkup;
-
-  // Refresh SimpleLightbox
-  lightbox.refresh();
-
-  // Show success message
-  iziToast.success({
-    title: 'Success',
-    message: `Found ${data.totalHits} images!`,
-    position: 'topRight',
-  });
 
   // Clear form
   event.target.reset();

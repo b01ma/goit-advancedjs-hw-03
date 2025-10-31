@@ -11,7 +11,7 @@
     <header class="header">
       <div class="container">
         <h1 class="title">Image Search Gallery</h1>
-        <form class="search-form" id="search-form">
+        <form class="form" id="search-form">
           <input
             type="text"
             name="searchQuery"
@@ -27,10 +27,7 @@
     <main>
       <div class="container">
         <!-- Loader -->
-        <div class="loader" id="loader" style="display: none;">
-          <div class="spinner"></div>
-          <p>Loading images...</p>
-        </div>
+        <span class="loader" id="loader" style="display: none;">Loading images...</span>
 
         <!-- Gallery -->
         <ul class="gallery" id="gallery"></ul>
