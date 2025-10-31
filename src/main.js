@@ -29,7 +29,7 @@ searchForm.addEventListener('submit', handleSearchSubmit);
  * Handles search form submission
  * @param {Event} event - Form submit event
  */
-function handleSearchSubmit(event) {
+async function handleSearchSubmit(event) {
   event.preventDefault();
 
   const formData = new FormData(event.target);
@@ -50,45 +50,46 @@ function handleSearchSubmit(event) {
   showLoader(loader);
 
   // Fetch images
-  fetchImages(query)
-    .then(data => {
-      hideLoader(loader);
+  let data = null;
+  try {
+    data = await fetchImages(query);
+  } catch (error) {
+    hideLoader(loader);
 
-      // Render gallery
-      const galleryMarkup = renderGallery(data.hits);
-      gallery.innerHTML = galleryMarkup;
-
-      // Refresh SimpleLightbox
-      lightbox.refresh();
-
-      // Show success message
-      iziToast.success({
-        title: 'Success',
-        message: `Found ${data.totalHits} images!`,
+    // Show error message
+    if (error.message === 'No images found for your search query.') {
+      iziToast.info({
+        title: 'No Results',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
-    })
-    .catch(error => {
-      hideLoader(loader);
+    } else {
+      iziToast.error({
+        title: 'Error',
+        message: 'Something went wrong. Please try again later.',
+        position: 'topRight',
+      });
+    }
 
-      // Show error message
-      if (error.message === 'No images found for your search query.') {
-        iziToast.info({
-          title: 'No Results',
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          position: 'topRight',
-        });
-      } else {
-        iziToast.error({
-          title: 'Error',
-          message: 'Something went wrong. Please try again later.',
-          position: 'topRight',
-        });
-      }
+    console.error('Error fetching images:', error);
+  }
 
-      console.error('Error fetching images:', error);
-    });
+  hideLoader(loader);
+
+  // Render gallery
+  const galleryMarkup = renderGallery(data.hits);
+  gallery.innerHTML = galleryMarkup;
+
+  // Refresh SimpleLightbox
+  lightbox.refresh();
+
+  // Show success message
+  iziToast.success({
+    title: 'Success',
+    message: `Found ${data.totalHits} images!`,
+    position: 'topRight',
+  });
 
   // Clear form
   event.target.reset();

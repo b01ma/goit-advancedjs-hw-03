@@ -68,7 +68,7 @@ export function clearGallery(galleryElement) {
  * @param {HTMLElement} loaderElement - Loader element
  */
 export function showLoader(loaderElement) {
-  loaderElement.style.display = 'block';
+  loaderElement.style.display = 'flex';
 }
 
 /**
